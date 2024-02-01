@@ -6,7 +6,6 @@ import usuarioRoutes from './routes/usuarioRoutes.js'
 import vueloRoutes from './routes/vueloRoutes.js'
 import destinoRoutes from './routes/destinoRoutes.js'
 import aerolineaRoutes from './routes/aerolineaRoutes.js'
-// import insertarVuelosEnDB from './seed.js'
 
 dotenv.config()
 const app = express()
@@ -35,7 +34,6 @@ app.use('/dorado/vuelos', vueloRoutes)
 app.use('/dorado/destinos', destinoRoutes)
 app.use('/dorado/aerolineas', aerolineaRoutes)
 app.use('/imagenes', express.static('imagenes'));
-// insertarVuelosEnDB()
 
 app.listen(PORT, ()=>{
     console.log(`Servidor escuchando por los cambios en el puerto ${PORT}`)

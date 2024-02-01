@@ -64,7 +64,6 @@ const autenticar = async (req, res) => {
 
 const confirmar = async (req, res) => {
     const { token } = req.params
-    console.log(token)
 
     const usuarioConfirmar = await Usuario.findOne({token})
 

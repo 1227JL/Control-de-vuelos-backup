@@ -7,9 +7,9 @@ const obtenerVuelos = async (req, res) => {
     let query = Vuelo.find()
       .populate("infoVuelo.origen infoVuelo.destino infoVuelo.aerolinea")
       .select("-infoVuelo.pasajeros");
-
+      
     // Si el usuario es 'Administrador', excluye los vuelos con estado 'Cancelado'
-    if (req.usuario && req.usuario.rol === "Administrador") {
+    if (req.usuario.rol !== "Administrador") {
       query = query.where("infoVuelo.estado").ne("Cancelado");
     }
 
@@ -43,6 +43,11 @@ const crearVuelo = async (req, res) => {
   const { idVuelo } = req.body;
 
   try {
+
+    if(req.usuario.rol !== 'Administrador'){
+      return res.status(401).json({msg: 'No estás autorizado a realizar esta acción'})
+    }
+
     const vueloExistente = await Vuelo.findOne({ idVuelo });
 
     if (vueloExistente) {
@@ -69,10 +74,16 @@ const actualizarVuelo = async (req, res) => {
 
   const { _id, ...actualizacion } = req.body;
 
+  
   try {
+    
     // Obtener el vuelo actual
     const vuelo = await Vuelo.findById(id);
 
+    if(req.usuario.rol !== 'Administrador'){
+      return res.status(401).json({msg: 'No estás autorizado a realizar esta acción'})
+    }
+    
     // Verificar si el vuelo existe
     if (!vuelo) {
       return res.status(404).json({ error: "Vuelo no encontrado" });
@@ -100,10 +111,16 @@ const actualizarVuelo = async (req, res) => {
 const eliminarVuelo = async (req, res) => {
   const { id } = req.params;
   try {
+
+    if(req.usuario.rol !== 'Administrador'){
+      return res.status(401).json({msg: 'No estás autorizado a realizar esta acción'})
+    }
+
     const vueloEliminado = await Vuelo.findByIdAndDelete(id);
     if (!vueloEliminado) {
       return res.status(404).json({ error: "Vuelo no encontrado" });
     }
+    
     res.json({ mensaje: "Vuelo eliminado exitosamente" });
   } catch (error) {
     console.error("Error al eliminar vuelo:", error);
@@ -115,6 +132,11 @@ const eliminarVuelo = async (req, res) => {
 const cancelarVuelo = async (req, res) => {
   const { id } = req.params;
   try {
+
+    if(req.usuario.rol !== 'Administrador'){
+      return res.status(401).json({msg: 'No estás autorizado a realizar esta acción'})
+    }
+
     // Obtener el vuelo por ID
     const vuelo = await Vuelo.findById(id);
 
@@ -149,8 +171,8 @@ const cancelarVuelo = async (req, res) => {
 };
 
 const asignarAsiento = async (req, res) => {
-  const { id } = req.params;
-  const { usuario } = req;
+  const { id } = req.params
+  const { usuario } = req
 
   try {
     const vueloExiste = await Vuelo.findById(id);
@@ -186,7 +208,7 @@ const asignarAsiento = async (req, res) => {
     // Guardar el cambio en la base de datos
     await vueloExiste.save();
 
-    res.status(200).json({ mensaje: "Asiento asignado exitosamente" }); // 200 OK
+    res.status(200).json({ msg: "Asiento asignado exitosamente" }); // 200 OK
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error interno del servidor" }); // 500 Internal Server Error

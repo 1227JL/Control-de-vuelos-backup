@@ -13,9 +13,9 @@ import checkAuth from '../middleware/checkAuth.js';
 const router = express.Router();
 
 // Ruta para obtener todos los vuelos
-router.get('/', obtenerVuelos);
+router.get('/', checkAuth, obtenerVuelos);
 // Ruta para obtener vuelo
-router.get('/:id', obtenerVuelo);
+router.get('/:id', checkAuth, obtenerVuelo);
 
 // Ruta para crear un nuevo vuelo
 router.post('/', checkAuth, crearVuelo);
@@ -30,6 +30,6 @@ router.get('/:id/cancelar', checkAuth, cancelarVuelo);
 router.delete('/:id', checkAuth, eliminarVuelo);
 
 // Asignar pasajero a asiento
-router.post('/:id', checkAuth, asignarAsiento);
+router.post('/pasajero/:id', checkAuth, asignarAsiento);
 
 export default router;
